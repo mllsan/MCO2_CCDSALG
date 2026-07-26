@@ -1,0 +1,126 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+
+/**
+ * Loads and represents the maze grid.
+ */
+public class Maze {
+    private char[][] grid;
+    private int rows;
+    private int cols;
+    private int startRow;
+    private int startCol;
+    private int goalRow;
+    private int goalCol;
+    private String filename;
+
+    public Maze() {
+        grid = null;
+        rows = 0;
+        cols = 0;
+        startRow = -1;
+        startCol = -1;
+        goalRow = -1;
+        goalCol = -1;
+        filename = "";
+    }
+
+    /**
+     * Loads a maze from the given file path.
+     * Returns true if the file was valid and loaded successfully.
+     */
+    public boolean loadFromFile(String filepath) {
+        boolean success = false;
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(filepath));
+            int m = Integer.parseInt(reader.readLine().trim());
+            int n = Integer.parseInt(reader.readLine().trim());
+
+            char[][] tempGrid = new char[m][n];
+            int foundStart = 0;
+            int foundGoal = 0;
+            int tmpStartRow = -1;
+            int tmpStartCol = -1;
+            int tmpGoalRow  = -1;
+            int tmpGoalCol  = -1;
+            boolean valid = true;
+
+            for (int r = 0; r < m && valid; r++) {
+                String line = reader.readLine();
+                if (line == null) {
+                    valid = false;
+                    System.out.println("Error: Maze file has fewer rows than expected (expected "
+                            + m + ").");
+                } else {
+                    // Pad short lines with spaces so every row has exactly n columns
+                    while (line.length() < n) {
+                        line = line + " ";
+                    }
+                    for (int c = 0; c < n; c++) {
+                        tempGrid[r][c] = line.charAt(c);
+                        if (tempGrid[r][c] == 'S') {
+                            tmpStartRow = r;
+                            tmpStartCol = c;
+                            foundStart++;
+                        } else if (tempGrid[r][c] == 'G') {
+                            tmpGoalRow = r;
+                            tmpGoalCol = c;
+                            foundGoal++;
+                        }
+                    }
+                }
+            }
+            reader.close();
+
+            if (valid && foundStart == 1 && foundGoal == 1) {
+                this.grid      = tempGrid;
+                this.rows      = m;
+                this.cols      = n;
+                this.startRow  = tmpStartRow;
+                this.startCol  = tmpStartCol;
+                this.goalRow   = tmpGoalRow;
+                this.goalCol   = tmpGoalCol;
+                this.filename  = filepath;
+                success = true;
+            } else if (valid && foundStart != 1) {
+                System.out.println("Error: Maze must have exactly one 'S'. Found: " + foundStart);
+            } else if (valid) {
+                System.out.println("Error: Maze must have exactly one 'G'. Found: " + foundGoal);
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Error: Could not parse maze dimensions. Ensure lines 1 and 2 are integers.");
+        } catch (Exception e) {
+            System.out.println("Error loading maze: " + e.getMessage());
+        }
+        return success;
+    }
+
+    /** Returns the character at the given cell. */
+    public char getCell(int row, int col) {
+        return grid[row][col];
+    }
+
+    /** Returns true if the cell is a wall. */
+    public boolean isWall(int row, int col) {
+        return grid[row][col] == '#';
+    }
+
+    /** Returns true if the cell can be walked on (not a wall). */
+    public boolean isTraversable(int row, int col) {
+        return grid[row][col] != '#';
+    }
+
+    /** Returns true if the coordinates are inside the maze bounds. */
+    public boolean inBounds(int row, int col) {
+        return row >= 0 && row < rows && col >= 0 && col < cols;
+    }
+
+    public int  getRows()     { return rows; }
+    public int  getCols()     { return cols; }
+    public int  getStartRow() { return startRow; }
+    public int  getStartCol() { return startCol; }
+    public int  getGoalRow()  { return goalRow; }
+    public int  getGoalCol()  { return goalCol; }
+    public boolean isLoaded() { return grid != null; }
+    public String getFilename() { return filename; }
+}
