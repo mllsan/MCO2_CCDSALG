@@ -1,20 +1,20 @@
 import java.util.ArrayList;
 
 /**
- * Manages unvisited maze nodes by dynamically sorting using lowest fcost.
+ * Manages unvisited maze nodes by dynamically sorting using lowest fcost
  */
 public class PriorityQueue {
     private ArrayList<Cell> list;
 
     /**
-     * Construct empty PriorityQueue.
+     * Construct empty PriorityQueue
      */
     public PriorityQueue() {
         list = new ArrayList<Cell>();
     }
 
     /**
-     * Insert Cell into the priority queue and maintain the heap property.
+     * Insert Cell into the priority queue and maintain the heap property
      * 
      * @param cell the Cell to be added
      */
@@ -24,7 +24,7 @@ public class PriorityQueue {
     }
 
     /**
-     * Removes the Cell with the highest priority (lowest fcost).
+     * Removes the Cell with the highest priority (lowest fcost)
      * 
      * @return the Cell with the lowest cost or null if empty
      */
@@ -44,7 +44,7 @@ public class PriorityQueue {
     }
 
     /**
-     * Return highest priority Cell without removing it.
+     * Return highest priority Cell without removing it
      * 
      * @return the Cell with the minimum cost, or null if empty
      */
@@ -59,7 +59,7 @@ public class PriorityQueue {
     }
 
     /**
-     * Checks if the priority queue is empty.
+     * Checks if the priority queue is empty
      * 
      * @return true if empty and false if not
      */
@@ -68,7 +68,7 @@ public class PriorityQueue {
     }
 
     /**
-     * Checks whether a specific cell is in the priority queue.
+     * Checks whether a specific cell is in the priority queue
      * 
      * @param cell the Cell to search for
      * @return true if the cell's coordinates are found in the queue, otherwise false
@@ -89,7 +89,7 @@ public class PriorityQueue {
     }
 
     /**
-     * Returns the number of elements in the priority queue.
+     * Returns the number of elements in the priority queue
      * 
      * @return size of the queue
      */
