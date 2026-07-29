@@ -7,7 +7,7 @@
 public class Cell implements Comparable<Cell> {
     private final int row;
     private final int col;
-    private final char symbol;
+    private char symbol;
     private int gCost;
     private int hCost;
     private Cell parent;
@@ -19,6 +19,14 @@ public class Cell implements Comparable<Cell> {
         this.hCost = 0;
         this.parent = null;
         this.symbol = symbol;
+    }
+
+    public boolean isWall() {
+        return this.symbol == '#';
+    }
+
+    public char getSymbol() {
+        return this.symbol;
     }
 
     public int getRow() {
@@ -45,17 +53,32 @@ public class Cell implements Comparable<Cell> {
         return parent;
     }
 
+    public void setSymbol(char symbol) {
+        this.symbol = symbol;
+    }
+
+    public void setGCost(int cost) {
+        this.gCost = cost;
+    }
+
+    public void setHCost(int cost) {
+        this.hCost = cost;
+    }
+
+    public void setParent(Cell parent) {
+        this.parent = parent;
+    }
+
     /**
      * Orders cells by their estimated total path cost. When f costs tie,
      * the cell with the lower heuristic is preferred.
      */
     @Override
     public int compareTo(Cell other) {
-        int fComparison = Integer.compare(getFCost(), other.getFCost());
-        int comparison = fComparison;
-        if (comparison == 0) {
-            comparison = Integer.compare(hCost, other.hCost);
-        }
+        int comparison = Integer.compare(getFCost(), other.getFCost());
+        if (comparison == 0)
+            comparison = Integer.compare(getHCost(), other.getHCost());
+
         return comparison;
     }
 }
