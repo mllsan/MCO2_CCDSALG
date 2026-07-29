@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 
 /**
@@ -31,8 +32,7 @@ public class Maze {
      */
     public boolean loadFromFile(String filepath) {
         boolean success = false;
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(filepath));
+        try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
             int m = Integer.parseInt(reader.readLine().trim());
             int n = Integer.parseInt(reader.readLine().trim());
 
@@ -49,7 +49,7 @@ public class Maze {
                 String line = reader.readLine();
                 if (line == null) {
                     valid = false;
-                    System.out.println("Error: Maze file has fewer rows than expected (expected "
+                    System.err.println("Error: Maze file has fewer rows than expected (expected "
                             + m + ").");
                 } else {
                     // Pad short lines with spaces so every row has exactly n columns
@@ -71,7 +71,6 @@ public class Maze {
                     }
                 }
             }
-            reader.close();
 
             if (valid && foundStart == 1 && foundGoal == 1) {
                 this.grid      = tempGrid;
@@ -84,14 +83,16 @@ public class Maze {
                 this.filename  = filepath;
                 success = true;
             } else if (valid && foundStart != 1) {
-                System.out.println("Error: Maze must have exactly one 'S'. Found: " + foundStart);
+                System.err.println("Error: Maze must have exactly one 'S'. Found: " + foundStart);
             } else if (valid) {
-                System.out.println("Error: Maze must have exactly one 'G'. Found: " + foundGoal);
+                System.err.println("Error: Maze must have exactly one 'G'. Found: " + foundGoal);
             }
+        } catch (FileNotFoundException e) {
+            System.err.println("Error: file not found.");
         } catch (NumberFormatException e) {
-            System.out.println("Error: Could not parse maze dimensions. Ensure lines 1 and 2 are integers.");
+            System.err.println("Error: Could not parse maze dimensions. Ensure lines 1 and 2 are integers.");
         } catch (Exception e) {
-            System.out.println("Error loading maze: " + e.getMessage());
+            System.err.println("Error loading maze: " + e.getMessage());
         }
         return success;
     }
