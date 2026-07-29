@@ -5,7 +5,7 @@ import java.io.FileReader;
  * Loads and represents the maze grid.
  */
 public class Maze {
-    private char[][] grid;
+    private Cell[][] grid;
     private int rows;
     private int cols;
     private int startRow;
@@ -36,7 +36,7 @@ public class Maze {
             int m = Integer.parseInt(reader.readLine().trim());
             int n = Integer.parseInt(reader.readLine().trim());
 
-            char[][] tempGrid = new char[m][n];
+            Cell[][] tempGrid = new Cell[m][n];
             int foundStart = 0;
             int foundGoal = 0;
             int tmpStartRow = -1;
@@ -57,12 +57,13 @@ public class Maze {
                         line = line + " ";
                     }
                     for (int c = 0; c < n; c++) {
-                        tempGrid[r][c] = line.charAt(c);
-                        if (tempGrid[r][c] == 'S') {
+                        char symbol = line.charAt(c);
+                        tempGrid[r][c] = new Cell(r,c,symbol);
+                        if (symbol == 'S') {
                             tmpStartRow = r;
                             tmpStartCol = c;
                             foundStart++;
-                        } else if (tempGrid[r][c] == 'G') {
+                        } else if (symbol == 'G') {
                             tmpGoalRow = r;
                             tmpGoalCol = c;
                             foundGoal++;
@@ -96,18 +97,8 @@ public class Maze {
     }
 
     /** Returns the character at the given cell. */
-    public char getCell(int row, int col) {
+    public Cell getCell(int row, int col) {
         return grid[row][col];
-    }
-
-    /** Returns true if the cell is a wall. */
-    public boolean isWall(int row, int col) {
-        return grid[row][col] == '#';
-    }
-
-    /** Returns true if the cell can be walked on (not a wall). */
-    public boolean isTraversable(int row, int col) {
-        return grid[row][col] != '#';
     }
 
     /** Returns true if the coordinates are inside the maze bounds. */
