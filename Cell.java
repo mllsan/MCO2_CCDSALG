@@ -7,16 +7,18 @@
 public class Cell implements Comparable<Cell> {
     private final int row;
     private final int col;
-    private final int gCost;
-    private final int hCost;
-    private final Cell parent;
+    private final char symbol;
+    private int gCost;
+    private int hCost;
+    private Cell parent;
 
-    public Cell(int row, int col, int gCost, int hCost, Cell parent) {
+    public Cell(int row, int col, char symbol) {
         this.row = row;
         this.col = col;
-        this.gCost = gCost;
-        this.hCost = hCost;
-        this.parent = parent;
+        this.gCost = Integer.MAX_VALUE;
+        this.hCost = 0;
+        this.parent = null;
+        this.symbol = symbol;
     }
 
     public int getRow() {
