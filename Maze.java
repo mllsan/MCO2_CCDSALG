@@ -1,11 +1,12 @@
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 
 /**
  * Loads and represents the maze grid.
  */
 public class Maze {
-    private char[][] grid;
+    private Cell[][] grid;
     private int rows;
     private int cols;
     private int startRow;
@@ -31,12 +32,11 @@ public class Maze {
      */
     public boolean loadFromFile(String filepath) {
         boolean success = false;
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(filepath));
+        try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
             int m = Integer.parseInt(reader.readLine().trim());
             int n = Integer.parseInt(reader.readLine().trim());
 
-            char[][] tempGrid = new char[m][n];
+            Cell[][] tempGrid = new Cell[m][n];
             int foundStart = 0;
             int foundGoal = 0;
             int tmpStartRow = -1;
@@ -49,7 +49,7 @@ public class Maze {
                 String line = reader.readLine();
                 if (line == null) {
                     valid = false;
-                    System.out.println("Error: Maze file has fewer rows than expected (expected "
+                    System.err.println("Error: Maze file has fewer rows than expected (expected "
                             + m + ").");
                 } else {
                     // Pad short lines with spaces so every row has exactly n columns
@@ -57,12 +57,13 @@ public class Maze {
                         line = line + " ";
                     }
                     for (int c = 0; c < n; c++) {
-                        tempGrid[r][c] = line.charAt(c);
-                        if (tempGrid[r][c] == 'S') {
+                        char symbol = line.charAt(c);
+                        tempGrid[r][c] = new Cell(r,c,symbol);
+                        if (symbol == 'S') {
                             tmpStartRow = r;
                             tmpStartCol = c;
                             foundStart++;
-                        } else if (tempGrid[r][c] == 'G') {
+                        } else if (symbol == 'G') {
                             tmpGoalRow = r;
                             tmpGoalCol = c;
                             foundGoal++;
@@ -70,7 +71,6 @@ public class Maze {
                     }
                 }
             }
-            reader.close();
 
             if (valid && foundStart == 1 && foundGoal == 1) {
                 this.grid      = tempGrid;
@@ -83,31 +83,23 @@ public class Maze {
                 this.filename  = filepath;
                 success = true;
             } else if (valid && foundStart != 1) {
-                System.out.println("Error: Maze must have exactly one 'S'. Found: " + foundStart);
+                System.err.println("Error: Maze must have exactly one 'S'. Found: " + foundStart);
             } else if (valid) {
-                System.out.println("Error: Maze must have exactly one 'G'. Found: " + foundGoal);
+                System.err.println("Error: Maze must have exactly one 'G'. Found: " + foundGoal);
             }
+        } catch (FileNotFoundException e) {
+            System.err.println("Error: file not found.");
         } catch (NumberFormatException e) {
-            System.out.println("Error: Could not parse maze dimensions. Ensure lines 1 and 2 are integers.");
+            System.err.println("Error: Could not parse maze dimensions. Ensure lines 1 and 2 are integers.");
         } catch (Exception e) {
-            System.out.println("Error loading maze: " + e.getMessage());
+            System.err.println("Error loading maze: " + e.getMessage());
         }
         return success;
     }
 
     /** Returns the character at the given cell. */
-    public char getCell(int row, int col) {
+    public Cell getCell(int row, int col) {
         return grid[row][col];
-    }
-
-    /** Returns true if the cell is a wall. */
-    public boolean isWall(int row, int col) {
-        return grid[row][col] == '#';
-    }
-
-    /** Returns true if the cell can be walked on (not a wall). */
-    public boolean isTraversable(int row, int col) {
-        return grid[row][col] != '#';
     }
 
     /** Returns true if the coordinates are inside the maze bounds. */
