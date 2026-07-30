@@ -79,88 +79,90 @@ public class MazeDisplay {
      *
      * @param delayMs milliseconds to wait between animation frames (0 = instant)
      */
-    // public void animate(Maze maze, SearchResult result,
-                        // String algorithmName, int delayMs, Scanner scanner) {
-        // boolean[][] explored = new boolean[maze.getRows()][maze.getCols()];
-        // ArrayList<int[]> order = result.getExplorationOrder();
-        // int totalSteps = order.size();
+    public void animate(Maze maze, Pathfinder pathfinder, String algorithmName,
+						int delayMs, Scanner scanner) {
+        boolean[][] explored = new boolean[maze.getRows()][maze.getCols()];
+        ArrayList<Cell> order = pathfinder.getExplorationOrder();
+        int totalSteps = order.size();
 
         // ── Phase 1: exploration animation ──────────────────────────────
-        // for (int i = 0; i < totalSteps; i++) {
-            // int[] cell = order.get(i);
-            // explored[cell[0]][cell[1]] = true;
+        for (int i = 0; i < totalSteps; i++) {
+            Cell cell = order.get(i);
+			explored[cell.getRow()][cell.getCol()] = true;
 
-            // clearScreen();
-            // printAnimHeader(algorithmName, i + 1, totalSteps, cell[0], cell[1]);
-            // printSeparator(maze.getCols());
-            // printGrid(maze, explored, cell[0], cell[1], null);
-            // printSeparator(maze.getCols());
-            // printLegend();
-            // System.out.flush();
-            // trySleep(delayMs);
-        // }
+            clearScreen();
+            printAnimHeader(algorithmName, i + 1, totalSteps, cell.getRow(), cell.getCol());
+            printSeparator(maze.getCols());
+            printGrid(maze, explored, cell.getRow(), cell.getCol(), null);
+            printSeparator(maze.getCols());
+            printLegend();
+            System.out.flush();
+            trySleep(delayMs);
+        }
 
         // ── Phase 2: show final result ───────────────────────────────────
-        // boolean[][] pathGrid = null;
-        // if (result.isSolutionFound()) {
-            // pathGrid = new boolean[maze.getRows()][maze.getCols()];
-            // ArrayList<int[]> path = result.getFinalPath();
-            // for (int i = 0; i < path.size(); i++) {
-                // pathGrid[path.get(i)[0]][path.get(i)[1]] = true;
-            // }
-        // }
+        boolean[][] pathGrid = null;
+        if (pathfinder.isSolutionFound()) {
+            pathGrid = new boolean[maze.getRows()][maze.getCols()];
+            ArrayList<Cell> path = pathfinder.getFinalPath();
 
-        // clearScreen();
-        // if (result.isSolutionFound()) {
-            // System.out.println(BOLD + GREEN + "SOLUTION FOUND" + RESET
-                    // + "  -  " + algorithmName);
-        // } else {
-            // System.out.println(BOLD + RED + "NO SOLUTION EXISTS" + RESET
-                    // + "  -  " + algorithmName);
-        // }
-        // printSeparator(maze.getCols());
-        // printGrid(maze, explored, -1, -1, pathGrid);
-        // printSeparator(maze.getCols());
-        // printLegend();
-    // }
+			for (int i = 0; i < path.size(); i++) {
+				Cell cell = path.get(i);
+				pathGrid[cell.getRow()][cell.getCol()] = true;
+			}
+        }
+
+        clearScreen();
+        if (pathfinder.isSolutionFound()) {
+            System.out.println(BOLD + GREEN + "SOLUTION FOUND" + RESET
+                    + "  -  " + algorithmName);
+        } else {
+            System.out.println(BOLD + RED + "NO SOLUTION EXISTS" + RESET
+                    + "  -  " + algorithmName);
+        }
+        printSeparator(maze.getCols());
+        printGrid(maze, explored, -1, -1, pathGrid);
+        printSeparator(maze.getCols());
+        printLegend();
+    }
 
     /** Prints the metrics table after a completed search. */
-    // public void showMetrics(SearchResult result, String algorithmName) {
-        // System.out.println();
-        // System.out.println(BOLD + CYAN
-                // + "┌─────────────────── RESULTS ────────────────────┐" + RESET);
+    public void showMetrics(Pathfinder pathfinder, String algorithmName, long executionTime) {
+        System.out.println();
+        System.out.println(BOLD + CYAN
+                + "┌─────────────────── RESULTS ────────────────────┐" + RESET);
 
-        // System.out.println("│  Algorithm       : "
-                // + padRight(algorithmName, 28) + BOLD + CYAN + "│" + RESET);
+        System.out.println("│  Algorithm       : "
+                + padRight(algorithmName, 28) + BOLD + CYAN + "│" + RESET);
 
-        // String solutionStatus;
-        // if (result.isSolutionFound()) {
-            // solutionStatus = "Found";
-        // } else {
-            // solutionStatus = "Not Found";
-        // }
-        // System.out.println("│  Solution        : "
-                // + padRight(solutionStatus, 28) + BOLD + CYAN + "│" + RESET);
+        String solutionStatus;
+        if (pathfinder.isSolutionFound()) {
+            solutionStatus = "Found";
+        } else {
+            solutionStatus = "Not Found";
+        }
+        System.out.println("│  Solution        : "
+                + padRight(solutionStatus, 28) + BOLD + CYAN + "│" + RESET);
 
-        // System.out.println("│  Cells Explored  : "
-                // + padRight(String.valueOf(result.getTotalCellsExplored()), 28) + BOLD + CYAN + "│" + RESET);
+        System.out.println("│  Cells Explored  : "
+                + padRight(String.valueOf(pathfinder.getCellsVisited()), 28) + BOLD + CYAN + "│" + RESET);
 
-        // String pathLengthStr;
-        // if (result.isSolutionFound()) {
-            // pathLengthStr = result.getPathLength() + " steps";
-        // } else {
-            // pathLengthStr = "N/A";
-        // }
-        // System.out.println("│  Path Length     : "
-                // + padRight(pathLengthStr, 28) + BOLD + CYAN + "│" + RESET);
+        String pathLengthStr;
+        if (pathfinder.isSolutionFound()) {
+            pathLengthStr = pathfinder.getPathLength() + " steps";
+        } else {
+            pathLengthStr = "N/A";
+        }
+        System.out.println("│  Path Length     : "
+                + padRight(pathLengthStr, 28) + BOLD + CYAN + "│" + RESET);
 
-        // System.out.println("│  Execution Time  : "
-                // + padRight(result.getExecutionTimeMs() + " ms", 28) + BOLD + CYAN + "│" + RESET);
+        System.out.println("│  Execution Time  : "
+                + padRight(executionTime + " ms", 28) + BOLD + CYAN + "│" + RESET);
 
-        // System.out.println(BOLD + CYAN
-                // + "└────────────────────────────────────────────────┘" + RESET);
-        // System.out.println();
-    // }
+        System.out.println(BOLD + CYAN
+                + "└────────────────────────────────────────────────┘" + RESET);
+        System.out.println();
+    }
 
     /** Waits for the user to press ENTER before continuing. */
     public void waitForEnter(Scanner scanner) {
@@ -189,7 +191,8 @@ public class MazeDisplay {
                            int curRow, int curCol, boolean[][] pathGrid) {
         for (int r = 0; r < maze.getRows(); r++) {
             for (int c = 0; c < maze.getCols(); c++) {
-                char cell = maze.getCell(r, c);
+                Cell currentCell = maze.getCell(r, c);
+				char cell = currentCell.getSymbol();
 
                 if (cell == '#') {
                     System.out.print(WALL + "   " + RESET);

@@ -113,17 +113,20 @@ public class Main {
      * Runs the selected algorithm, animates the search, and shows metrics.
      */
     private static void runAlgorithm(Maze maze, Scanner scanner, MazeDisplay display, int delay) {
-        String algorithmName = "";
-        // SearchResult result = null;
+		String algorithmName = "A* (A-Star Search)";
 
-        algorithmName = "A* (A-Star Search)";
-        // AStarSolver aStar = new AStarSolver();
-        // result = aStar.solve(maze);
-		
-		System.out.println("\n !! Animate Algorithm here !!");
-        // display.animate(maze, result, algorithmName, delay, scanner);
-		System.out.println("\n !! Display Metrics here !!");
-        // display.showMetrics(result, algorithmName);
-        display.waitForEnter(scanner);
-    }
+		PriorityQueue pq = new PriorityQueue();
+		Pathfinder pathfinder = new Pathfinder(maze, pq);
+
+		long startTime = System.currentTimeMillis();
+
+		pathfinder.solve();
+
+		long endTime = System.currentTimeMillis();
+		long executionTime = endTime - startTime;
+
+		display.animate(maze, pathfinder, algorithmName, delay, scanner);
+		display.showMetrics(pathfinder, algorithmName, executionTime);
+		display.waitForEnter(scanner);
+	}
 }
