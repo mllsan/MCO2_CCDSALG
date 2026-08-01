@@ -10,10 +10,10 @@ public class MazeGUI {
     private MazePanel mazePanel;
     private JLabel metricsLabel;
     private JPanel topBar;
-    JButton startButton;
-    JButton loadButton;
-    JButton exitButton;
-    JButton menuButton;
+    private JButton startButton;
+    private JButton loadButton;
+    private JButton exitButton;
+    private JButton menuButton;
 
     public MazeGUI(Maze m, Pathfinder p) {
         this.m = m;
