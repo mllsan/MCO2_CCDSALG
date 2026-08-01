@@ -58,10 +58,19 @@ public class Pathfinder {
                 if (r == maze.getGoalRow() && c == maze.getGoalCol()) {
                     goalFound = true;
                     isSearching = false;
+                    int remaining = unvisited.size();
+                    for (int i = 0; i < remaining; i++) {
+                        Cell abandoned = unvisited.dequeue();
+                        abandoned.setOpen(false);
+                        abandoned.setVisited(true);
+                    }
                     backtrack(current);
                 } else {
                     exploreNeighbors(current);
                 }
+            }
+            else {
+                current.setOpen(false);
             }
         } else if (unvisited.isEmpty() && !goalFound) {
             isSearching = false;
