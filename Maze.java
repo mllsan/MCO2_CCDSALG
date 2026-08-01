@@ -33,8 +33,9 @@ public class Maze {
     public boolean loadFromFile(String filepath) {
         boolean success = false;
         try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
-            int m = Integer.parseInt(reader.readLine().trim());
-            int n = Integer.parseInt(reader.readLine().trim());
+            String[] dim = reader.readLine().split("\\s");
+            int m = Integer.parseInt(dim[0]);
+            int n = Integer.parseInt(dim[1]);
 
             Cell[][] tempGrid = new Cell[m][n];
             int foundStart = 0;
