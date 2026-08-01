@@ -7,9 +7,14 @@ public class MazeGUI {
     private JFrame appFrame;
     private Pathfinder pathfinder;
     private Maze m;
-    private MazePanel mazePanel;
+    private MazePanel mainMaze;
+    private MazePanel previewMaze;
+    private JLabel previewDescription;
     private JLabel metricsLabel;
     private JPanel topBar;
+    private JPanel centerContainer;
+    private JPanel rightMenuPanel;
+    private CardLayout screenMngr;
     private JButton startButton;
     private JButton loadButton;
     private JButton exitButton;
@@ -21,7 +26,7 @@ public class MazeGUI {
     }
 
     public void menu() {
-        appFrame = new JFrame("Maze: A* Search");
+        appFrame = new JFrame("A Star is Searched: A* Search for Maze");
         appFrame.setLayout(new BorderLayout());
         appFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         appFrame.getContentPane().setBackground(new Color(13,13,104));
@@ -29,20 +34,53 @@ public class MazeGUI {
         startButton = new JButton("Start");
         loadButton = new JButton("Load Maze");
         exitButton = new JButton("Exit");
-        menuButton = new JButton("Return to Main Menu");
+        menuButton = new JButton("Main Menu");
 
         topBar = createTopBar();
         appFrame.add(topBar, BorderLayout.NORTH);
-
-        mazePanel = new MazePanel(m);
-        appFrame.add(mazePanel, BorderLayout.CENTER);
-        mazePanel.setVisible(false);
-
         JPanel metricBar = metricsBar();
         appFrame.add(metricBar, BorderLayout.SOUTH);
 
+        screenMngr = new CardLayout();
+        centerContainer = new JPanel(screenMngr);
+        centerContainer.setBackground(new Color(13,13,104));
+
+        JPanel menuScreen = new JPanel(new BorderLayout(20,20));
+        menuScreen.setBackground(new Color(13,13,104));
+        menuScreen.setBorder(BorderFactory.createEmptyBorder(20,40,20,40));
+
+        JLabel titleCard = new JLabel("<html>A Star is<br>Searched</html>", JLabel.LEFT);
+        titleCard.setFont(new Font("Monospaced", Font.BOLD | Font.ITALIC, 45));
+        titleCard.setForeground(Color.WHITE);
+        menuScreen.add(titleCard, BorderLayout.WEST);
+
+        rightMenuPanel = new JPanel(new BorderLayout(0,10));
+        rightMenuPanel.setBackground(new Color(13,13,104));
+
+        previewMaze = new MazePanel(m);
+        previewMaze.setPreferredSize(new Dimension(350, 300));
+
+        previewDescription = new JLabel("Select a maze to preview", JLabel.CENTER);
+        previewDescription.setFont(new Font("Monospaced", Font.PLAIN, 14));
+        previewDescription.setForeground(Color.LIGHT_GRAY);
+
+        rightMenuPanel.add(previewMaze,BorderLayout.CENTER);
+        rightMenuPanel.add(previewDescription,BorderLayout.SOUTH);
+        rightMenuPanel.setVisible(false);
+
+        menuScreen.add(rightMenuPanel, BorderLayout.EAST);
+
+        mainMaze = new MazePanel(m);
+        JPanel mazeScreen = new JPanel(new BorderLayout());
+        mazeScreen.add(mainMaze, BorderLayout.CENTER);
+
+        centerContainer.add(menuScreen, "MENU_SCREEN");
+        centerContainer.add(mazeScreen, "MAZE_SCREEN");
+        appFrame.add(centerContainer, BorderLayout.CENTER);
+
         appFrame.setSize(1000, 700);
         appFrame.setLocationRelativeTo(null);
+        screenMngr.show(centerContainer, "MENU_SCREEN");
         appFrame.setVisible(true);
     }
 
@@ -95,7 +133,11 @@ public class MazeGUI {
                             m.getCell(r,c).resetStates();
                         }
                     }
-                    mazePanel.setMaze(m);
+                    previewMaze.setMaze(m);
+                    previewMaze.repaint();
+                    previewDescription.setText("Successfully loaded maze! (" + m.getRows() + " x " + m.getCols() + ")");
+                    rightMenuPanel.setVisible(true);
+                    mainMaze.setMaze(m);
                 }
                 else
                     JOptionPane.showMessageDialog(dialog, "Failed to load maze.");
@@ -110,18 +152,21 @@ public class MazeGUI {
     }
 
     public void animate() {
-        mazePanel.setVisible(true);
+        mainMaze.setMaze(m);
+        mainMaze.repaint();
+        screenMngr.show(centerContainer, "MAZE_SCREEN");
+        mainMaze.setVisible(true);
         if (m != null && m.isLoaded()) {
 
             if (timer != null && timer.isRunning())
                 timer.stop();
 
             pathfinder.init();
-            mazePanel.repaint();
+            mainMaze.repaint();
 
             timer = new Timer(75, e -> {
                 pathfinder.move();
-                mazePanel.repaint();
+                mainMaze.repaint();
 
                 metricsLabel.setText("Cells Visited: " + pathfinder.getCellsVisited() +
                         " | Path Length: " + pathfinder.getPathLength() +
@@ -207,9 +252,10 @@ public class MazeGUI {
         }
         updateButtonVisibility();
 
-        if (mazePanel != null) {
-            mazePanel.repaint();
-            mazePanel.setVisible(false);
+        if (mainMaze != null) {
+            mainMaze.repaint();
+            mainMaze.setVisible(false);
         }
+        screenMngr.show(centerContainer, "MENU_SCREEN");
     }
 }
