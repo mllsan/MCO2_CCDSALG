@@ -91,7 +91,7 @@ public class Maze {
         } catch (FileNotFoundException e) {
             System.err.println("Error: file not found.");
         } catch (NumberFormatException e) {
-            System.err.println("Error: Could not parse maze dimensions. Ensure lines 1 and 2 are integers.");
+            System.err.println("Error: Could not parse maze dimensions. Ensure dimensions are integers.");
         } catch (Exception e) {
             System.err.println("Error loading maze: " + e.getMessage());
         }
