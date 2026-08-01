@@ -17,7 +17,7 @@ public class MazeGUI {
         appFrame = new JFrame("Maze: A* Search");
         appFrame.setLayout(new BorderLayout());
         appFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        appFrame.getContentPane().setBackground(new Color(0,0,0));
+        appFrame.setBackground(new Color(13,13,104));
 
         JPanel topBar = createTopBar();
         appFrame.add(topBar, BorderLayout.NORTH);
@@ -104,6 +104,7 @@ public class MazeGUI {
 
                 if(pathfinder.isSearchDone()) {
                     ((Timer) e.getSource()).stop();
+                    displayMetrics();
 
                     if(pathfinder.isGoalFound()) {
                         JOptionPane.showMessageDialog(appFrame, "There is no valid path found!");
@@ -115,6 +116,10 @@ public class MazeGUI {
         else {
             JOptionPane.showMessageDialog(appFrame, "There is no maze loaded yet.");
         }
+    }
+
+    public void displayMetrics() {
+
     }
 
     public static void main(String[] args) {
