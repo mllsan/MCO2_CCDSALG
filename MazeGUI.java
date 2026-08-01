@@ -2,13 +2,15 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MazeGUI {
+    Timer timer;
     JFrame appFrame;
-    JPanel appContainer;
+    Pathfinder pathfinder;
     Maze m;
     MazePanel mazePanel;
 
-    public MazeGUI(Maze m) {
+    public MazeGUI(Maze m, Pathfinder p) {
         this.m = m;
+        this.pathfinder = p;
     }
 
     public void menu() {
@@ -36,7 +38,7 @@ public class MazeGUI {
         JButton loadButton = new JButton("Load Maze");
         JButton exitButton = new JButton("Exit");
 
-        Font buttonFont = new Font("Monospace", Font.BOLD, 16);
+        Font buttonFont = new Font("Monospaced", Font.BOLD, 16);
         Dimension buttonSize = new Dimension(150,45);
 
         for (JButton b : new JButton[]{startButton, loadButton, exitButton}) {
@@ -45,6 +47,7 @@ public class MazeGUI {
             bar.add(b);
         }
 
+        startButton.addActionListener(e -> animate());
         loadButton.addActionListener(e -> chooseMazes());
         exitButton.addActionListener(e -> System.exit(0));
 
@@ -66,8 +69,14 @@ public class MazeGUI {
                 String filepath = "mazes/maze" + maze +".txt";
                 boolean isLoaded = m.loadFromFile(filepath);
 
-                if (isLoaded)
+                if (isLoaded) {
+                    for (int r = 0; r < m.getRows(); r++) {
+                        for (int c = 0; c < m.getCols(); c++) {
+                            m.getCell(r,c).resetStates();
+                        }
+                    }
                     mazePanel.setMaze(m);
+                }
                 else
                     JOptionPane.showMessageDialog(dialog, "Failed to load maze.");
 
@@ -80,12 +89,40 @@ public class MazeGUI {
         dialog.setVisible(true);
     }
 
+    public void animate() {
+        if (m != null && m.isLoaded()) {
 
+            if (timer != null && timer.isRunning())
+                timer.stop();
+
+            pathfinder.init();
+            mazePanel.repaint();
+
+            timer = new Timer(50, e -> {
+                pathfinder.move();
+                mazePanel.repaint();
+
+                if(pathfinder.isSearchDone()) {
+                    ((Timer) e.getSource()).stop();
+
+                    if(pathfinder.isGoalFound()) {
+                        JOptionPane.showMessageDialog(appFrame, "There is no valid path found!");
+                    }
+                }
+            });
+            timer.start();
+        }
+        else {
+            JOptionPane.showMessageDialog(appFrame, "There is no maze loaded yet.");
+        }
+    }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             Maze m = new Maze();
-            new MazeGUI(m).menu();
+            PriorityQueue pq = new PriorityQueue();
+            Pathfinder p = new Pathfinder(m, pq);
+            new MazeGUI(m,p).menu();
         });
     }
 }
