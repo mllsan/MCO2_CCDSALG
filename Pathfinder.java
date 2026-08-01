@@ -4,6 +4,10 @@ public class Pathfinder {
     private boolean[][] closed;
     private int pathLength;
     private int cellsVisited;
+    private boolean isInit;
+    private boolean goalFound;
+    private boolean isSearching;
+
 
     public Pathfinder(Maze maze, PriorityQueue pq) {
         this.maze = maze;
@@ -14,7 +18,7 @@ public class Pathfinder {
         return Math.abs(r1 - r2) + Math.abs(c1 - c2);
     }
 
-    public void solve() {
+    public void init() {
         int rows = maze.getRows();
         int cols = maze.getCols();
         closed = new boolean[rows][cols];
@@ -31,12 +35,16 @@ public class Pathfinder {
         start.setGCost(0);
         start.setHCost(calculateManhattan(startRow, startCol, goalRow, goalCol));
         start.getFCost();
-
         unvisited.enqueue(start);
-        boolean goalFound = false;
+        this.isInit = true;
+        this.goalFound = false;
+        this.isSearching = true;
+    }
+
+    public Cell move() {
         Cell checkGoalCell = null;
 
-        while (!unvisited.isEmpty() && !goalFound) {
+        while (!unvisited.isEmpty() && !goalFound && isInit) {
             Cell current = unvisited.dequeue();
             int r = current.getRow();
             int c = current.getCol();
@@ -45,45 +53,58 @@ public class Pathfinder {
                 closed[r][c] = true;
                 cellsVisited++;
 
-                if (r == goalRow && c == goalCol) {
+                if (r == maze.getGoalRow() && c == maze.getGoalCol()) {
                     goalFound = true;
+                    isSearching = false;
                     checkGoalCell = current;
+                    backtrack(checkGoalCell);
                 } else {
-                    int[] vRow = {-1, 1, 0, 0};
-                    int[] vCol = {0, 0, -1, 1};
-
-                    for (int i = 0; i < 4; i++) {
-                        int nextRow = r + vRow[i];
-                        int nextCol = c + vCol[i];
-
-                        if (maze.inBounds(nextRow, nextCol)
-                                && !maze.getCell(nextRow, nextCol).isWall()
-                                && !closed[nextRow][nextCol])
-                        {
-                            Cell neighbor = maze.getCell(nextRow, nextCol);
-                            int tempGCost = current.getGCost() + 1;
-
-                            if (tempGCost < neighbor.getGCost()) {
-                                neighbor.setParent(current);
-                                neighbor.setGCost(tempGCost);
-                                neighbor.setHCost(calculateManhattan(nextRow, nextCol, goalRow, goalCol));
-                                neighbor.getFCost();
-
-                                unvisited.enqueue(neighbor);
-                            }
-                        }
-                    }
+                    exploreNeighbors(current);
                 }
             }
         }
+        return checkGoalCell;
+    }
 
+    public void exploreNeighbors(Cell current) {
+        int[] vRow = {-1, 1, 0, 0};
+        int[] vCol = {0, 0, -1, 1};
+
+        for (int i = 0; i < 4; i++) {
+            int nextRow = current.getRow() + vRow[i];
+            int nextCol = current.getCol() + vCol[i];
+
+            if (maze.inBounds(nextRow, nextCol)
+                    && !maze.getCell(nextRow, nextCol).isWall()
+                    && !closed[nextRow][nextCol])
+            {
+                Cell neighbor = maze.getCell(nextRow, nextCol);
+                int tempGCost = current.getGCost() + 1;
+
+                if (tempGCost < neighbor.getGCost())
+                {
+                    neighbor.setParent(current);
+                    neighbor.setGCost(tempGCost);
+                    neighbor.setHCost(calculateManhattan(nextRow, nextCol,
+                            maze.getGoalRow(), maze.getGoalCol()));
+                    neighbor.getFCost();
+
+                    unvisited.enqueue(neighbor);
+                }
+            }
+        }
+    }
+
+    public void backtrack(Cell goalCell) {
         if (goalFound) {
-            Cell backtrack = checkGoalCell;
+            Cell backtrack = goalCell;
             while (backtrack != null) {
                 pathLength++;
                 backtrack = backtrack.getParent();
             }
         }
+        else
+            System.err.println("Error: Goal has not been found.");
     }
 
     public int getPathLength() {
