@@ -8,6 +8,8 @@ public class Pathfinder {
     private boolean goalFound;
     private boolean isSearching;
     private boolean searchDone;
+    private long startTime;
+    private long execTimeNanos;
 
 
     public Pathfinder(Maze maze, PriorityQueue pq) {
@@ -59,6 +61,8 @@ public class Pathfinder {
     }
 
     public void move() {
+        long start = System.nanoTime();
+
         if (!unvisited.isEmpty() && !goalFound && isInit) {
             Cell current = unvisited.dequeue();
             int r = current.getRow();
@@ -92,6 +96,8 @@ public class Pathfinder {
             isSearching = false;
             searchDone = true;
         }
+        long end = System.nanoTime();
+        this.execTimeNanos += (end - start);
     }
 
     public void exploreNeighbors(Cell current) {
@@ -142,6 +148,15 @@ public class Pathfinder {
     }
     public int getCellsVisited() {
         return this.cellsVisited;
+    }
+
+    public double getExecutionTimeMillis() {
+        return execTimeNanos / 1000000.0;
+    }
+
+    public void resetTimers() {
+        this.startTime = 0;
+        this.execTimeNanos = 0;
     }
 
     public boolean isSearching() {
