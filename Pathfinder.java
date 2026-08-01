@@ -170,4 +170,12 @@ public class Pathfinder {
     public boolean isSearchDone() {
         return searchDone;
     }
+
+    public void setSearching(boolean isSearching) {
+        this.isSearching = isSearching;
+    }
+
+    public void setSearchDone(boolean searchDone) {
+        this.searchDone = searchDone;
+    }
 }
