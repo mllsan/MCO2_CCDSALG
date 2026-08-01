@@ -7,6 +7,7 @@ public class Pathfinder {
     private boolean isInit;
     private boolean goalFound;
     private boolean isSearching;
+    private boolean searchDone;
 
 
     public Pathfinder(Maze maze, PriorityQueue pq) {
@@ -36,34 +37,35 @@ public class Pathfinder {
         start.setHCost(calculateManhattan(startRow, startCol, goalRow, goalCol));
         start.getFCost();
         unvisited.enqueue(start);
+        start.setVisited(true);
         this.isInit = true;
         this.goalFound = false;
         this.isSearching = true;
     }
 
-    public Cell move() {
-        Cell checkGoalCell = null;
-
-        while (!unvisited.isEmpty() && !goalFound && isInit) {
+    public void move() {
+        if (!unvisited.isEmpty() && !goalFound && isInit) {
             Cell current = unvisited.dequeue();
             int r = current.getRow();
             int c = current.getCol();
 
             if (!closed[r][c]) {
                 closed[r][c] = true;
+                current.setVisited(true);
+                current.setOpen(false);
                 cellsVisited++;
 
                 if (r == maze.getGoalRow() && c == maze.getGoalCol()) {
                     goalFound = true;
                     isSearching = false;
-                    checkGoalCell = current;
-                    backtrack(checkGoalCell);
+                    backtrack(current);
                 } else {
                     exploreNeighbors(current);
                 }
             }
+        } else if (unvisited.isEmpty() && !goalFound) {
+            isSearching = false;
         }
-        return checkGoalCell;
     }
 
     public void exploreNeighbors(Cell current) {
@@ -90,6 +92,7 @@ public class Pathfinder {
                     neighbor.getFCost();
 
                     unvisited.enqueue(neighbor);
+                    neighbor.setOpen(true);
                 }
             }
         }
@@ -99,6 +102,7 @@ public class Pathfinder {
         if (goalFound) {
             Cell backtrack = goalCell;
             while (backtrack != null) {
+                backtrack.setInPath(true);
                 pathLength++;
                 backtrack = backtrack.getParent();
             }
@@ -110,9 +114,19 @@ public class Pathfinder {
     public int getPathLength() {
         return this.pathLength;
     }
-
     public int getCellsVisited() {
         return this.cellsVisited;
     }
 
+    public boolean isSearching() {
+        return isSearching;
+    }
+
+    public boolean isGoalFound() {
+        return goalFound;
+    }
+
+    public boolean isSearchDone() {
+        return searchDone;
+    }
 }
