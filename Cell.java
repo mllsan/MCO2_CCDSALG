@@ -12,6 +12,10 @@ public class Cell implements Comparable<Cell> {
     private int hCost;
     private Cell parent;
 
+    private boolean isVisited;
+    private boolean isOpen;
+    private boolean isInPath;
+
     public Cell(int row, int col, char symbol) {
         this.row = row;
         this.col = col;
@@ -53,6 +57,30 @@ public class Cell implements Comparable<Cell> {
         return parent;
     }
 
+    public boolean isInPath() {
+        return isInPath;
+    }
+
+    public boolean isOpen() {
+        return isOpen;
+    }
+
+    public boolean isVisited() {
+        return isVisited;
+    }
+
+    public void setVisited(boolean visited) {
+        this.isVisited = visited;
+    }
+
+    public void setInPath(boolean inPath) {
+        isInPath = inPath;
+    }
+
+    public void setOpen(boolean open) {
+        isOpen = open;
+    }
+
     public void setSymbol(char symbol) {
         this.symbol = symbol;
     }
@@ -67,6 +95,12 @@ public class Cell implements Comparable<Cell> {
 
     public void setParent(Cell parent) {
         this.parent = parent;
+    }
+
+    public void resetStates() {
+        this.isOpen = false;
+        this.isVisited = false;
+        this.isInPath = false;
     }
 
     /**
