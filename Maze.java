@@ -33,8 +33,9 @@ public class Maze {
     public boolean loadFromFile(String filepath) {
         boolean success = false;
         try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
-            int m = Integer.parseInt(reader.readLine().trim());
-            int n = Integer.parseInt(reader.readLine().trim());
+            String[] dim = reader.readLine().split("\\s");
+            int m = Integer.parseInt(dim[0]);
+            int n = Integer.parseInt(dim[1]);
 
             Cell[][] tempGrid = new Cell[m][n];
             int foundStart = 0;
@@ -90,7 +91,7 @@ public class Maze {
         } catch (FileNotFoundException e) {
             System.err.println("Error: file not found.");
         } catch (NumberFormatException e) {
-            System.err.println("Error: Could not parse maze dimensions. Ensure lines 1 and 2 are integers.");
+            System.err.println("Error: Could not parse maze dimensions. Ensure dimensions are integers.");
         } catch (Exception e) {
             System.err.println("Error loading maze: " + e.getMessage());
         }
