@@ -30,19 +30,27 @@ public class MazePanel extends JPanel {
                     Cell cell = maze.getCell(r,c);
                     char symbol = cell.getSymbol();
 
-                    switch(symbol) {
-                        case '#':
-                            g.setColor(new Color(13,13,104));
-                            break;
-                        case 'S':
-                            g.setColor(Color.YELLOW);
-                            break;
-                        case 'G':
-                            g.setColor(Color.CYAN);
-                            break;
-                        default:
-                            g.setColor(Color.BLACK);
-                            break;
+                    if (cell.isInPath())
+                        g.setColor(Color.YELLOW);
+                    else if (cell.isVisited())
+                        g.setColor(Color.LIGHT_GRAY);
+                    else if(cell.isOpen())
+                        g.setColor(new Color(255,255,204));
+                    else {
+                        switch(symbol) {
+                            case '#':
+                                g.setColor(new Color(13,13,104));
+                                break;
+                            case 'S':
+                                g.setColor(Color.YELLOW);
+                                break;
+                            case 'G':
+                                g.setColor(Color.CYAN);
+                                break;
+                            default:
+                                g.setColor(Color.BLACK);
+                                break;
+                        }
                     }
 
                     int x = c * cellWidth;
