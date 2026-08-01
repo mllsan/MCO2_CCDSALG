@@ -42,7 +42,7 @@ public class MazePanel extends JPanel {
                                 g.setColor(new Color(13,13,104));
                                 break;
                             case 'S':
-                                g.setColor(Color.YELLOW);
+                                g.setColor(Color.PINK);
                                 break;
                             case 'G':
                                 g.setColor(Color.CYAN);
