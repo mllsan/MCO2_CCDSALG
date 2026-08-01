@@ -27,6 +27,20 @@ public class Pathfinder {
         cellsVisited = 0;
         pathLength = 0;
 
+        while (!unvisited.isEmpty()) {
+            unvisited.dequeue();
+        }
+
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                Cell cell = maze.getCell(r, c);
+                if (cell != null) {
+                    cell.setGCost(Integer.MAX_VALUE);
+                    cell.setParent(null);
+                }
+            }
+        }
+
         int startRow = maze.getStartRow();
         int startCol = maze.getStartCol();
         int goalRow = maze.getGoalRow();
@@ -41,6 +55,7 @@ public class Pathfinder {
         this.isInit = true;
         this.goalFound = false;
         this.isSearching = true;
+        this.searchDone = false;
     }
 
     public void move() {
@@ -58,6 +73,7 @@ public class Pathfinder {
                 if (r == maze.getGoalRow() && c == maze.getGoalCol()) {
                     goalFound = true;
                     isSearching = false;
+                    searchDone = true;
                     backtrack(current);
                 } else {
                     exploreNeighbors(current);
@@ -65,6 +81,7 @@ public class Pathfinder {
             }
         } else if (unvisited.isEmpty() && !goalFound) {
             isSearching = false;
+            searchDone = true;
         }
     }
 
