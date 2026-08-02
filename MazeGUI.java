@@ -165,14 +165,22 @@ public class MazeGUI {
             mainMaze.repaint();
 
             timer = new Timer(75, e -> {
-                pathfinder.move();
-                mainMaze.repaint();
+                if (pathfinder.isSearching()) {
+                    pathfinder.move();
+                    mainMaze.repaint();
 
-                metricsLabel.setText("Cells Visited: " + pathfinder.getCellsVisited() +
-                        " | Path Length: " + pathfinder.getPathLength() +
-                        " | Status: Searching for path...");
+                    metricsLabel.setText("Cells Visited: " + pathfinder.getCellsVisited() +
+                            " | Path Length: " + pathfinder.getPathLength() +
+                            " | Status: Searching for path...");
 
-                if(pathfinder.isSearchDone()) {
+                } else if (pathfinder.isGoalFound() && pathfinder.isAnimatingPath()) {
+                    pathfinder.stepThruPath();
+                    mainMaze.repaint();
+
+                    metricsLabel.setText("Cells Visited: " + pathfinder.getCellsVisited() +
+                            " | Path Length: " + pathfinder.getPathLength() +
+                            " | Status: Tracing final path...");
+                } else {
                     ((Timer) e.getSource()).stop();
                     updateButtonVisibility();
 
@@ -181,15 +189,14 @@ public class MazeGUI {
                                 " | Path Length: " + pathfinder.getPathLength() +
                                 " | Status: No path was found! | Execution Time: "
                                 + pathfinder.getExecutionTimeMillis() + " ms");
-                        pathfinder.resetTimers();
                     }
                     else {
                         metricsLabel.setText("Cells Visited: " + pathfinder.getCellsVisited() +
                                 " | Path Length: " + pathfinder.getPathLength() +
                                 " | Status: Goal found! | Execution Time: "
                                 + pathfinder.getExecutionTimeMillis() + " ms");
-                        pathfinder.resetTimers();
                     }
+                    pathfinder.resetTimers();
                 }
             });
             timer.start();
