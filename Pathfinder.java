@@ -1,3 +1,8 @@
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 public class Pathfinder {
     private Maze maze;
     private PriorityQueue unvisited;
@@ -8,6 +13,9 @@ public class Pathfinder {
     private boolean goalFound;
     private boolean isSearching;
     private boolean searchDone;
+    private List<Cell> finalPath;
+    private int pathIdx;
+    private boolean isAnimatingPath = false;
     private long startTime;
     private long execTimeNanos;
 
@@ -131,16 +139,45 @@ public class Pathfinder {
     }
 
     public void backtrack(Cell goalCell) {
+        List<Cell> finalPath = new ArrayList<>();
+        Cell backtrack = goalCell;
+
         if (goalFound) {
-            Cell backtrack = goalCell;
             while (backtrack != null) {
-                backtrack.setInPath(true);
-                pathLength++;
+                finalPath.add(backtrack);
                 backtrack = backtrack.getParent();
             }
+            Collections.reverse(finalPath);
+            this.finalPath = finalPath;
+
+            this.pathIdx = 0;
+            this.isAnimatingPath = true;
         }
-        else
+        else {
             System.err.println("Error: Goal has not been found.");
+        }
+    }
+
+    public boolean stepThruPath() {
+        boolean isMoving = false;
+
+        if (isAnimatingPath && pathIdx < finalPath.size()) {
+            Cell c = finalPath.get(pathIdx);
+            c.setInPath(true);
+            pathIdx++;
+
+            if (pathIdx >= finalPath.size()) {
+                isAnimatingPath = false;
+            } else {
+                isMoving = true;
+            }
+        }
+
+        return isMoving;
+    }
+
+    public boolean isAnimatingPath() {
+        return isAnimatingPath;
     }
 
     public int getPathLength() {
