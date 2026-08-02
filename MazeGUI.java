@@ -117,7 +117,7 @@ public class MazeGUI {
         dialog.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 15));
 
         Dimension btnSize = new Dimension(80, 40);
-        for (int i = 1; i <= 4; i++) {
+        for (int i = 1; i <= 6; i++) {
             int maze = i;
             JButton btnChoice = new JButton(String.valueOf(maze));
             btnChoice.setPreferredSize(btnSize);

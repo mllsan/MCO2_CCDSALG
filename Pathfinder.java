@@ -28,6 +28,7 @@ public class Pathfinder {
 
         cellsVisited = 0;
         pathLength = 0;
+        resetTimers();
 
         while (!unvisited.isEmpty()) {
             unvisited.dequeue();
@@ -81,7 +82,6 @@ public class Pathfinder {
                     for (int i = 0; i < remaining; i++) {
                         Cell abandoned = unvisited.dequeue();
                         abandoned.setOpen(false);
-                        abandoned.setVisited(true);
                     }
                     searchDone = true;
                     backtrack(current);
@@ -146,6 +146,7 @@ public class Pathfinder {
     public int getPathLength() {
         return this.pathLength;
     }
+
     public int getCellsVisited() {
         return this.cellsVisited;
     }
