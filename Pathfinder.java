@@ -149,6 +149,7 @@ public class Pathfinder {
             }
             Collections.reverse(finalPath);
             this.finalPath = finalPath;
+            this.pathLength = this.finalPath.size();
 
             this.pathIdx = 0;
             this.isAnimatingPath = true;
