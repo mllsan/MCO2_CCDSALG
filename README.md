@@ -14,12 +14,10 @@ This program is a Rat in a Maze pathfinding simulator that uses the A* (A-Star) 
 Open a terminal in the folder containing `Main.java` and enter the following command in the terminal to compile the program:
 ```
 javac *.java
-
 ```
 Enter the following command in the terminal to run the program:
 ```
 java Main
-
 ```
 This will open the application's GUI, where you can load or generate a maze, run the A* algorithm, and observe the pathfinding simulation.
 
