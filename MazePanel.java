@@ -7,6 +7,7 @@ public class MazePanel extends JPanel {
 
     public MazePanel(Maze m) {
         this.maze = m;
+        setBackground(new Color(13, 13, 104));
     }
 
     public void setMaze(Maze m) {
@@ -39,7 +40,7 @@ public class MazePanel extends JPanel {
                     else {
                         switch(symbol) {
                             case '#':
-                                g.setColor(new Color(13,13,104));
+                                g.setColor(new Color(19, 52, 88));
                                 break;
                             case 'S':
                                 g.setColor(Color.PINK);
@@ -57,7 +58,7 @@ public class MazePanel extends JPanel {
                     int y = r * cellHeight;
                     g.fillRect(x, y, cellWidth, cellHeight);
 
-                    g.setColor(Color.LIGHT_GRAY);
+                    g.setColor(new Color(0, 0, 0, 80));
                     g.drawRect(x,y,cellWidth,cellHeight);
                 }
             }
