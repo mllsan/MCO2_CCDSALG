@@ -58,7 +58,7 @@ public class MazeGUI {
         rightMenuPanel.setBackground(new Color(13,13,104));
 
         previewMaze = new MazePanel(m);
-        previewMaze.setPreferredSize(new Dimension(350, 300));
+        previewMaze.setPreferredSize(new Dimension(500, 450));
 
         previewDescription = new JLabel("Select a maze to preview", JLabel.CENTER);
         previewDescription.setFont(new Font("Monospaced", Font.PLAIN, 14));
